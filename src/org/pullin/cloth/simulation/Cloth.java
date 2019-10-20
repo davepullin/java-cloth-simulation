@@ -67,9 +67,8 @@ public class Cloth {
         Point p = this.points.get((int) (x + (y) * (rendererPage.cloth_width + 1)));
         float x_c = start_x + x * rendererPage.spacing;
         float y_c = rendererPage.start_y + y * rendererPage.spacing;
-        if (p.getX() != x_c || p.getY() != y_c) {
-            System.out.println("get failure: " + p.getX() + "," + p.getY() + "!=" + x_c + "," + y_c);
-        }
+        p.pos.check(x_c,y_c);
+        
         return p;
     }
 

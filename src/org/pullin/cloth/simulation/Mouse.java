@@ -31,6 +31,10 @@ public class Mouse {
         this.button = button;
     }
 
+    public Vec get() {
+        return new Vec(x,y);
+    }
+    
     public int getX() {
         return x;
     }
@@ -47,20 +51,23 @@ public class Mouse {
         this.y = y;
     }
 
-    public int getPx() {
-        return px;
+    public Vec getP() {
+        return new Vec(px,py);
     }
-
-    public void setPx(int px) {
-        this.px = px;
-    }
-
-    public int getPy() {
-        return py;
-    }
-
-    public void setPy(int py) {
-        this.py = py;
-    }
+//    public int getPx() {
+//        return px;
+//    }
+//
+//    public void setPx(int px) {
+//        this.px = px;
+//    }
+//
+//    public int getPy() {
+//        return py;
+//    }
+//
+//    public void setPy(int py) {
+//        this.py = py;
+//    }
 
 }
