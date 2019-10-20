@@ -9,28 +9,27 @@ import java.util.ArrayList;
  */
 public class Point {
 
-    private float x;
-    private float y;
-    private float px;
-    private float py;
+    private Vec2 pos = new Vec2();
 
-    private float vx;
-    private float vy;
-    private Float pin_x;
-    private Float pin_y;
+    private Vec2 prev = new Vec2();
+    private Vec2 velocity = new Vec2();
+    private Vec2 pin = null;
+
     private ArrayList<Constraint> constraints;
     private Mouse mouse;
     private RendererPage rendererPage;
 
     public Point(float x, float y, RendererPage rendererPage) {
-        this.x = x;
-        this.y = y;
-        this.px = x;
-        this.py = y;
-        this.vx = 0;
-        this.vy = 0;
-        this.pin_x = null;
-        this.pin_y = null;
+        this(new Vec2(x, y), rendererPage);
+    }
+
+    public Point(Vec2 pos, RendererPage rendererPage) {
+        this.pos = new Vec2(pos);
+
+        this.prev = new Vec2(pos);
+        this.velocity = new Vec2(0, 0);
+        this.pin = null;
+
         this.constraints = new ArrayList<Constraint>();
         this.mouse = rendererPage.getMouse();
         this.rendererPage = rendererPage;
@@ -38,15 +37,15 @@ public class Point {
 
     public void update(float delta) {
         if (rendererPage.mouse.isDown()) {
-
-            float diff_x = this.x - mouse.getX();
-            float diff_y = this.y - mouse.getY();
-            float dist = (float) Math.sqrt(diff_x * diff_x + diff_y * diff_y);
+            Vec2 diff = new Vec2(
+                    this.pos.x - mouse.getX(),
+                    this.pos.y - mouse.getY());
+            float dist = (float) Math.sqrt(diff.x * diff.x + diff.y * diff.y);
 
             if (mouse.getButton() == 1) {
                 if (dist < rendererPage.mouse_influence) {
-                    this.px = this.x - (float) ((mouse.getX() - mouse.getPx()) * 1.0f);
-                    this.py = this.y - (float) ((mouse.getY() - mouse.getPy()) * 1.0f);
+                    this.prev.set( this.pos.x - (mouse.getX() - mouse.getPx()) * 1.0f
+                    , this.pos.y - (mouse.getY() - mouse.getPy()) * 1.0f);
                 }
 
             } else if (dist < rendererPage.mouse_cut) {
@@ -57,16 +56,15 @@ public class Point {
         this.add_force(0, rendererPage.gravity);
 
         delta *= delta;
-        float nx = this.x + ((this.x - this.px) * .99f) + ((this.vx / 2) * delta);
-        float ny = this.y + ((this.y - this.py) * .99f) + ((this.vy / 2) * delta);
+        Vec2 newpos = new Vec2(
+                this.pos.x + ((this.pos.x - this.prev.x) * .99f) + ((this.velocity.x / 2) * delta)
+                ,this.pos.y + ((this.pos.y - this.prev.y) * .99f) + ((this.velocity.y / 2) * delta)
+        );
 
-        this.px = this.x;
-        this.py = this.y;
+        this.prev=pos;
+        this.pos=newpos;
 
-        this.x = (float) nx;
-        this.y = (float) ny;
-
-        this.vy = this.vx = 0;
+        this.velocity.set(0,0);
     }
 
     /**
@@ -86,9 +84,9 @@ public class Point {
 
     public void resolve_constraints() {
         // this point is in a fixed position
-        if (this.pin_x != null && this.pin_y != null) {
-            this.x = this.pin_x;
-            this.y = this.pin_y;
+        if (this.pin != null) {
+            this.pos.x = this.pin.x;
+            this.pos.y = this.pin.y;
             return;
         }
 
@@ -98,29 +96,30 @@ public class Point {
         }
 
 // dont let points escape the window
-        if (this.x > rendererPage.boundsx) {
-            this.x = 2 * rendererPage.boundsx - this.x;
+        if (this.pos.x > rendererPage.boundsx) {
+            this.pos.x = 2 * rendererPage.boundsx - this.pos.x;
         } else {
-            if (1 > this.x) {
-                this.x = 2 - this.x;
+            if (1 > this.pos.x) {
+                this.pos.x = 2 - this.pos.x;
             }
         }
-        if (this.y < 1) {
-            this.y = 2 - this.y;
+        if (this.pos.y < 1) {
+            this.pos.y = 2 - this.pos.y;
         } else {
-            if (this.y > rendererPage.boundsy) {
-                this.y = 2 * rendererPage.boundsy - this.y;
+            if (this.pos.y > rendererPage.boundsy) {
+                this.pos.y = 2 * rendererPage.boundsy - this.pos.y;
             }
         }
     }
 
     /**
      * fix this point where it is
-     * 
+     *
      */
-    public void pin() {      
+    public void pin() {
         this.pin(this.getX(), this.getY());
     }
+
     /**
      * make a constraint that attach this point to another point
      *
@@ -137,78 +136,77 @@ public class Point {
     }
 
     public void add_force(float x, float y) {
-        this.vx += x;
-        this.vy += y;
+        this.velocity.x += x;
+        this.velocity.y += y;
     }
 
     public boolean pin(float pinx, float piny) {
-        this.pin_x = pinx;
-        this.pin_y = piny;
+        this.pin = new Vec2(pinx, piny);
         return true;
     }
 
     public float getX() {
-        return x;
+        return pos.x;
     }
 
     public void setX(float x) {
-        this.x = x;
+        this.pos.x = x;
     }
 
     public float getY() {
-        return y;
+        return pos.y;
     }
 
     public void setY(float y) {
-        this.y = y;
+        this.pos.y = y;
     }
 
     public float getPx() {
-        return px;
+        return prev.x;
     }
 
     public void setPx(float px) {
-        this.px = px;
+        this.prev.x = px;
     }
 
     public float getPy() {
-        return py;
+        return prev.y;
     }
 
     public void setPy(float py) {
-        this.py = py;
+        this.prev.y = py;
     }
 
     public float getVx() {
-        return vx;
+        return velocity.x;
     }
 
     public void setVx(float vx) {
-        this.vx = vx;
+        this.velocity.x = vx;
     }
 
     public float getVy() {
-        return vy;
+        return velocity.y;
     }
 
     public void setVy(float vy) {
-        this.vy = vy;
+        this.velocity.y = vy;
     }
 
     public Float getPin_x() {
-        return pin_x;
+        return pin.x;
     }
 
     public void setPin_x(Float pin_x) {
-        this.pin_x = pin_x;
+        this.pin.x = pin_x;
     }
 
     public Float getPin_y() {
-        return pin_y;
+        return pin.y;
     }
 
     public void setPin_y(Float pin_y) {
-        this.pin_y = pin_y;
+        this.pin.y = pin_y;
     }
 
     public ArrayList<Constraint> getConstraints() {

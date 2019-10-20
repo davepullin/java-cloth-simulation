@@ -26,7 +26,7 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
     public int start_y = 20;
     public int spacing = 10;//7;
     public float spring_constant = 0.5f;
-    public float shear_constant = 0.01f;
+    public float shear_constant = 0.5f;
     public int tear_distance = 60;
     public Path2D.Float path2d;
 

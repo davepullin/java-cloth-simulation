@@ -13,9 +13,9 @@ public class Cloth {
     private RendererPage rendererPage;
 
     private boolean pin_top = true;
-    private boolean pin_bottom = true;
-    private boolean pin_left = true;
-    private boolean pin_right = true;
+    private boolean pin_bottom = false;
+    private boolean pin_left = false;
+    private boolean pin_right = false;
     private boolean shear = true;
     private final int start_x;
 
