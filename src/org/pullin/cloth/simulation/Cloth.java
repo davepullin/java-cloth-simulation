@@ -1,5 +1,6 @@
 package org.pullin.cloth.simulation;
 
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
 /**
@@ -90,12 +91,12 @@ public class Cloth {
         }
     }
 
-    public void draw() {
-        rendererPage.path2d.reset();
+    public void draw(Path2D path2d) {
+        path2d.reset();
 
-        int i = rendererPage.cloth.points.size();
+        int i = this.points.size();
         while (0 != i--) {
-            rendererPage.cloth.points.get(i).draw();
+            this.points.get(i).draw(path2d);
         }
 
     }

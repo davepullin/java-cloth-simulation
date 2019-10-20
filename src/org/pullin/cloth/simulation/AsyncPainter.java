@@ -1,17 +1,18 @@
 package org.pullin.cloth.simulation;
 
+import java.awt.Component;
+
 /**
- *  * based on org.sarath.cloth.simulation
  *
  * @author root
  */
-public class WorkerThread extends Thread {
+public class AsyncPainter extends Thread {
 
-    private RendererPage rendererPage;
+    private Component component;
 
-    public WorkerThread(RendererPage rendererPage) {
+    public AsyncPainter(Component component) {
         super();
-        this.rendererPage = rendererPage;
+        this.component = component;
     }
 
     @Override
@@ -21,7 +22,7 @@ public class WorkerThread extends Thread {
                 Thread.sleep(10);
             } catch (Exception e) {
             }
-            rendererPage.repaint();
+            component.repaint();
         }
     }
 

@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Path2D;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
@@ -18,6 +19,8 @@ import javax.swing.JPanel;
 public class RendererPage extends JPanel implements MouseListener, MouseMotionListener {
     
     public static int Z_PLANE=10;
+    private static final int FRAME_WIDTH = 560;
+    private static final int FRAME_HEIGHT = 450;
 
     public int physics_accuracy = 5;
     public int mouse_influence = 20;
@@ -30,19 +33,18 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
     public float spring_constant = 0.5f;
     public float shear_constant = 0.5f;
     public int tear_distance = 60;
-    public Path2D.Float path2d;
+    public Path2D path2d;
 
     public Mouse mouse;
 
-    public int boundsx;
-    public int boundsy;
+    public Vec bounds; 
+
     public Cloth cloth;
 
     public RendererPage() {
         setMouse(new Mouse());
         path2d = new Path2D.Float();
-        boundsx = 560 - 1;
-        boundsy = 350 - 1;
+        bounds= new Vec(FRAME_WIDTH - 1, FRAME_HEIGHT - 100 - 1, 0f);
 
         cloth = new Cloth(this);
         addMouseListener(this);
@@ -57,7 +59,7 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
 
         Graphics2D g2d = (Graphics2D) g;
         cloth.update();
-        cloth.draw();
+        cloth.draw(path2d);
         g2d.setColor(Color.white);
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
@@ -118,5 +120,20 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
         mouse.pos = new Vec( e.getX(),  e.getY(), 0f);
         mouse.down = false;
     }
+    
+    public static void main(String[] args) {
+        JFrame jFrame = new JFrame();
+        jFrame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+        jFrame.setLocationRelativeTo(null);
+        RendererPage rendererPage = new RendererPage();
+        jFrame.getContentPane().add(rendererPage);
 
+        jFrame.setVisible(true);
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        AsyncPainter thread = new AsyncPainter(rendererPage);
+        thread.start();
+    }
+    
+    
 }

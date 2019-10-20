@@ -1,5 +1,6 @@
 package org.pullin.cloth.simulation;
 
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
 /**
@@ -39,24 +40,22 @@ public class Point {
 
             if (mouse.getButton() == 1) {
                 if (dist < rendererPage.mouse_influence) {
-//                    this.prev.set(this.pos.x - (mouse.getX() - mouse.getPx()) * 1.0f,
-//                             this.pos.y - (mouse.getY() - mouse.getPy()) * 1.0f);
                     this.prev.set(this.pos);
-                    this.prev.set((p,m,mp)->p - (m - mp) * 1.0f,mouse.get(),mouse.getP());
+                    this.prev.set((p, m, mp) -> p - (m - mp) * 1.0f, mouse.get(), mouse.getP());
                 }
 
             } else if (dist < rendererPage.mouse_cut) {
-                this.constraints = new ArrayList<Constraint>();
+                this.constraints = new ArrayList<>();
             }
         }
 
         this.add_force(rendererPage.gravity);
 
-        delta *= delta;
-        final float fdelta=delta;
         
+        final float fdelta = delta *delta;
+
         Vec newpos = new Vec(pos);
-        newpos.set((Float pos1, Float prev1, Float velocity1) -> pos1 + ((pos1 - prev1) * .99f) + ((velocity1 / 2) * fdelta),this.prev,this.velocity);
+        newpos.set((Float pos1, Float prev1, Float velocity1) -> pos1 + ((pos1 - prev1) * .99f) + ((velocity1 / 2) * fdelta), this.prev, this.velocity);
 
         this.prev = pos;
         this.pos = newpos;
@@ -68,14 +67,14 @@ public class Point {
      * draw constraints as a line (probably not required in my use case)
      *
      */
-    public void draw() {
+    public void draw(Path2D path2d) {
         if (this.constraints.size() == 0) {
             return;
         }
 
         int i = this.constraints.size();
         while (0 != i--) {
-            this.constraints.get(i).draw(rendererPage.path2d);
+            this.constraints.get(i).draw(path2d);
         }
     }
 
@@ -91,9 +90,8 @@ public class Point {
             this.constraints.get(i).resolve();
         }
 
-// dont let points escape the window
-this.pos.keep_inside(new Vec(rendererPage.boundsx,rendererPage.boundsy,0));
-        
+        this.pos.keep_inside(rendererPage.bounds);
+
     }
 
     /**
@@ -143,7 +141,5 @@ this.pos.keep_inside(new Vec(rendererPage.boundsx,rendererPage.boundsy,0));
     public void setMouse(Mouse mouse) {
         this.mouse = mouse;
     }
-
-
 
 }
