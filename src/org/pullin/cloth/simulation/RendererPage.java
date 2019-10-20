@@ -16,11 +16,13 @@ import javax.swing.JPanel;
  */
 
 public class RendererPage extends JPanel implements MouseListener, MouseMotionListener {
+    
+    public static int Z_PLANE=10;
 
     public int physics_accuracy = 5;
     public int mouse_influence = 20;
     public int mouse_cut = 5;
-    public Vec gravity = new Vec(0,500);
+    public Vec gravity = new Vec(0,500, 0.0F);
     public int cloth_height = 30;
     public int cloth_width = 50;
     public int start_y = 20;
@@ -94,10 +96,8 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
     @Override
     public void mousePressed(MouseEvent e) {
         mouse.button = e.getButton();
-        mouse.px = mouse.x;
-        mouse.py = mouse.y;
-        mouse.x = e.getX();
-        mouse.y = e.getY();
+        mouse.previous = mouse.pos;
+        mouse.pos = new Vec( e.getX(),  e.getY(), 0);
         mouse.down = true;
     }
 
@@ -108,18 +108,14 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        mouse.px = mouse.x;
-        mouse.py = mouse.y;
-        mouse.x = e.getX();
-        mouse.y = e.getY();
+         mouse.previous = mouse.pos;
+        mouse.pos = new Vec( e.getX(),  e.getY(), 0f);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        mouse.px = mouse.x;
-        mouse.py = mouse.y;
-        mouse.x = e.getX();
-        mouse.y = e.getY();
+         mouse.previous = mouse.pos;
+        mouse.pos = new Vec( e.getX(),  e.getY(), 0f);
         mouse.down = false;
     }
 
