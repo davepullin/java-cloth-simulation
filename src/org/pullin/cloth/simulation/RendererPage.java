@@ -20,7 +20,7 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
     public int physics_accuracy = 5;
     public int mouse_influence = 20;
     public int mouse_cut = 5;
-    public Vec gravity = new Vec(0,500);
+    public Vec gravity = new Vec(0,500, 0.0F);
     public int cloth_height = 30;
     public int cloth_width = 50;
     public int start_y = 20;

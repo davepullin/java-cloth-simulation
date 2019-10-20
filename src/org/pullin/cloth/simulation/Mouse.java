@@ -32,7 +32,7 @@ public class Mouse {
     }
 
     public Vec get() {
-        return new Vec(x,y);
+        return new Vec(x,y, 0.0F);
     }
     
     public int getX() {
@@ -52,7 +52,7 @@ public class Mouse {
     }
 
     public Vec getP() {
-        return new Vec(px,py);
+        return new Vec(px,py, 0.0F);
     }
 //    public int getPx() {
 //        return px;

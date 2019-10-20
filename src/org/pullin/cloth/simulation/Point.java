@@ -20,7 +20,7 @@ public class Point {
     private RendererPage rendererPage;
 
     public Point(float x, float y, RendererPage rendererPage) {
-        this(new Vec(x, y), rendererPage);
+        this(new Vec(x, y, 0.0F), rendererPage);
     }
 
     public Point(Vec pos, RendererPage rendererPage) {
@@ -61,7 +61,7 @@ public class Point {
         this.prev = pos;
         this.pos = newpos;
 
-        this.velocity.set(0, 0);
+        this.velocity.set(0, 0, 0);
     }
 
     /**
@@ -92,7 +92,7 @@ public class Point {
         }
 
 // dont let points escape the window
-this.pos.keep_inside(rendererPage.boundsx,rendererPage.boundsy);
+this.pos.keep_inside(new Vec(rendererPage.boundsx,rendererPage.boundsy,0));
         
     }
 
@@ -124,7 +124,7 @@ this.pos.keep_inside(rendererPage.boundsx,rendererPage.boundsy);
     }
 
     public boolean pin(float pinx, float piny) {
-        this.pin = new Vec(pinx, piny);
+        this.pin = new Vec(pinx, piny, 0.0F);
         return true;
     }
 
