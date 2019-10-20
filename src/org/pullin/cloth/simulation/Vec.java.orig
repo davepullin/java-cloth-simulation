@@ -83,6 +83,7 @@ public class Vec {
     }
 
     void keep_inside(Vec bounds) {
+<<<<<<< HEAD
         if (true) {
             this.set((p, b) -> {
                 if (p < 1) {
@@ -109,8 +110,30 @@ public class Vec {
                 if (this.y > boundsy) {
                     this.y = 2 * boundsy - this.y;
                 }
+=======
+        this.set((p, b) -> {
+            if (p < 1) {
+                p = 2 - p;
+            } else if (p > b) {
+                p = 2 * b - p;
+>>>>>>> master
             }
-        }
+            return p;
+        }, bounds);
+
+//        if (this.x < 1) {
+//            this.x = 2 - this.x;
+//        } else if (this.x > boundsx) {
+//            this.x = 2 * boundsx - this.x;
+//        }
+//
+//        if (this.y < 1) {
+//            this.y = 2 - this.y;
+//        } else {
+//            if (this.y > boundsy) {
+//                this.y = 2 * boundsy - this.y;
+//            }
+//        }
     }
 
     public void check(float x_c, float y_c) {

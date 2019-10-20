@@ -20,7 +20,11 @@ public class Point {
     private RendererPage rendererPage;
 
     public Point(float x, float y, RendererPage rendererPage) {
+<<<<<<< HEAD
         this(new Vec(x, y, RendererPage.Z_PLANE), rendererPage);
+=======
+        this(new Vec(x, y, 0.0F), rendererPage);
+>>>>>>> master
     }
 
     public Point(Vec pos, RendererPage rendererPage) {

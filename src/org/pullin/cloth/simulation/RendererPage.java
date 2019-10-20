@@ -16,6 +16,8 @@ import javax.swing.JPanel;
  */
 
 public class RendererPage extends JPanel implements MouseListener, MouseMotionListener {
+    
+    public static int Z_PLANE=10;
 
     public int physics_accuracy = 5;
     public int mouse_influence = 20;

@@ -11,12 +11,14 @@ public class Cloth {
 
     public ArrayList<Point> points;
     private RendererPage rendererPage;
+    
+    private boolean pin_all = true;
 
     private boolean pin_top = true;
-    private boolean pin_bottom = false;
-    private boolean pin_left = false;
-    private boolean pin_right = false;
-    private boolean shear = true;
+    private boolean pin_bottom = false && pin_all;
+    private boolean pin_left = pin_all;
+    private boolean pin_right = pin_all;
+    private boolean shear = false;
     private final int start_x;
 
     public Cloth(RendererPage rendererPage) {
