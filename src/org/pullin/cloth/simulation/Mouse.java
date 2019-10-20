@@ -10,10 +10,9 @@ public class Mouse {
 
     public boolean down = false;
     public int button = 1;
-    public int x = 0;
-    public int y = 0;
-    public int px = 0;
-    public int py = 0;
+    public Vec pos = new Vec();
+    public Vec previous = new Vec();
+
 
     public boolean isDown() {
         return down;
@@ -32,27 +31,27 @@ public class Mouse {
     }
 
     public Vec get() {
-        return new Vec(x,y, 0.0F);
+        return pos;
     }
     
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
+//    public int getX() {
+//        return pos.x;
+//    }
+//
+//    public void setX(int x) {
+//        this.pos.x = x;
+//    }
+//
+//    public int getY() {
+//        return pos.y;
+//    }
+//
+//    public void setY(int y) {
+//        this.pos.y = y;
+//    }
 
     public Vec getP() {
-        return new Vec(px,py, 0.0F);
+        return previous;
     }
 //    public int getPx() {
 //        return px;

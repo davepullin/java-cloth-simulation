@@ -94,10 +94,8 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
     @Override
     public void mousePressed(MouseEvent e) {
         mouse.button = e.getButton();
-        mouse.px = mouse.x;
-        mouse.py = mouse.y;
-        mouse.x = e.getX();
-        mouse.y = e.getY();
+        mouse.previous = mouse.pos;
+        mouse.pos = new Vec( e.getX(),  e.getY(), 0);
         mouse.down = true;
     }
 
@@ -108,18 +106,14 @@ public class RendererPage extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        mouse.px = mouse.x;
-        mouse.py = mouse.y;
-        mouse.x = e.getX();
-        mouse.y = e.getY();
+         mouse.previous = mouse.pos;
+        mouse.pos = new Vec( e.getX(),  e.getY(), 0f);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        mouse.px = mouse.x;
-        mouse.py = mouse.y;
-        mouse.x = e.getX();
-        mouse.y = e.getY();
+         mouse.previous = mouse.pos;
+        mouse.pos = new Vec( e.getX(),  e.getY(), 0f);
         mouse.down = false;
     }
 
