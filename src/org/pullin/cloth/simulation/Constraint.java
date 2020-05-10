@@ -12,7 +12,7 @@ import java.awt.geom.Path2D;
  *
  * removed dependency on rendererPage
  *
- * @author root
+ * Copyright Dave Pullin. Licensed proprietary property. see http://davepullin.com/license
  */
 public class Constraint {
 
@@ -21,16 +21,15 @@ public class Constraint {
     private Point p1;
     private Point p2;
     private float length;
+    private Physics physics;
 
-    private float tear_distance;
-
-    public Constraint(Point p1, Point p2, float spacing, float spring_constant, float tear_distance) {
+    public Constraint(Point p1, Point p2, float spring_constant, Physics physics) {
         this.p1 = p1;
         this.p2 = p2;
-
+        this.physics = physics;
         this.length = p1.pos.diff(p2.pos).length();// spacing;
         this.spring_constant = spring_constant;
-        this.tear_distance = tear_distance;
+
     }
 
     /**
@@ -41,20 +40,24 @@ public class Constraint {
 
         float distance = movement.length();
 
-        if (distance > tear_distance) {
+        if (distance > physics.tear_distance) {
+            System.out.println("tear: " + p1 + "," + p2);
             this.p1.remove_constraint(this);
         }
-        float factor = (this.length - distance) / distance;
-        movement.set((a) -> a * factor * spring_constant);
+        float factor = distance==0?1:(this.length - distance) / distance;
+        movement.set((p) -> p * factor * spring_constant);
 
-        this.p1.pos.set((a, b) -> a + b, movement);
-        this.p2.pos.set((a, b) -> a - b, movement);
+        this.p1.pos.set((p, m) -> p + m, movement);
+        this.p2.pos.set((p, m) -> p - m, movement);
 
     }
 
-    public void draw(Path2D path2d) {
-        p1.pos.moveTo(path2d);
-        p2.pos.lineTo(path2d);
-       
+    public void draw(Path2D path2d,ProjectionTransform transform) {
+        if(Main.debug_points)System.out.print("draw:"+p1.pos+"-"+p2.pos+"\t");
+        p1.pos.moveTo(path2d,transform);
+        p2.pos.lineTo(path2d,transform);
+    }
+    public static void main(String[] args) {
+        Main.main(args);
     }
 }

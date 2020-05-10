@@ -2,11 +2,12 @@ package org.pullin.cloth.simulation;
 
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 /**
- *  * based on org.sarath.cloth.simulation
  *
- * @author root
+ * Copyright Dave Pullin. Licensed proprietary property. see
+ * http://davepullin.com/license
  */
 public class Point {
 
@@ -17,45 +18,50 @@ public class Point {
     private Vec pin = null;
 
     private ArrayList<Constraint> constraints;
-    private Mouse mouse;
-    private RendererPage rendererPage;
 
-    public Point(float x, float y, RendererPage rendererPage) {
-        this(new Vec(x, y, RendererPage.Z_PLANE), rendererPage);
+    private Physics physics;
+
+    public Point(float x, float y, Physics physics) {
+        this(new Vec(x, y, Main.Z_PLANE), physics);
     }
 
-    public Point(Vec pos, RendererPage rendererPage) {
+    public Point(Vec pos, Physics physics) {
         this.pos = new Vec(pos);
         this.prev = new Vec(pos);
 
         this.constraints = new ArrayList<Constraint>();
-        this.mouse = rendererPage.getMouse();
-        this.rendererPage = rendererPage;
+        this.physics = physics;
     }
 
-    public void update(float delta) {
-        if (rendererPage.mouse.isDown()) {
+    public void update(Mouse mouse) {
+        if (mouse.isDown()) {
             Vec diff = this.pos.diff(mouse.get());
             float dist = diff.length();
 
             if (mouse.getButton() == 1) {
-                if (dist < rendererPage.mouse_influence) {
+                if (dist < physics.mouse_influence) {
                     this.prev.set(this.pos);
-                    this.prev.set((p, m, mp) -> p - (m - mp) * 1.0f, mouse.get(), mouse.getP());
+                    this.pos.set((p, m, mp) -> p - (m - mp) * 1.0f, mouse.get(), mouse.getP());
                 }
 
-            } else if (dist < rendererPage.mouse_cut) {
+            } else if (mouse.getButton() == 2) {
+                if (dist < physics.mouse_influence) {
+                    this.prev.set(this.pos);
+//                    Vec from = mouse.getP();
+//                    Vec to = mouse.get();
+//                    from.shifted();
+//                    this.pos.set((p, m, mp) -> p - (m - mp) * 1.0f, new Vec(0f,0f,0.01f), new Vec(0,0,0));
+                    this.pos.set((p, m, mp) -> p - (m - mp) * 1.0f,  mouse.get().shifted(), mouse.getP().shifted());
+                }
+            } else if (dist < physics.mouse_cut) {
                 this.constraints = new ArrayList<>();
             }
         }
 
-        this.add_force(rendererPage.gravity);
-
-        
-        final float fdelta = delta *delta;
+        this.add_force(physics.gravity);
 
         Vec newpos = new Vec(pos);
-        newpos.set((Float pos1, Float prev1, Float velocity1) -> pos1 + ((pos1 - prev1) * .99f) + ((velocity1 / 2) * fdelta), this.prev, this.velocity);
+        newpos.set((Float pos1, Float prev1, Float velocity1) -> pos1 + ((pos1 - prev1) * .99f) + ((velocity1 / 2) * physics.delta_squared), this.prev, this.velocity);
 
         this.prev = pos;
         this.pos = newpos;
@@ -67,31 +73,25 @@ public class Point {
      * draw constraints as a line (probably not required in my use case)
      *
      */
-    public void draw(Path2D path2d) {
-        if (this.constraints.size() == 0) {
-            return;
-        }
+    public void draw(Path2D path2d, ProjectionTransform transform) {
+        for_each_constraint((c) -> c.draw(path2d, transform));
 
-        int i = this.constraints.size();
-        while (0 != i--) {
-            this.constraints.get(i).draw(path2d);
-        }
+        path2d.append(pos.marker(transform), false);
     }
 
     public void resolve_constraints() {
-        // this point is in a fixed position
         if (this.pin != null) {
             this.pos.set(this.pin);
-            return;
+        } else {
+            for_each_constraint((c) -> c.resolve());
         }
+    }
 
+    private void for_each_constraint(Consumer<Constraint> con) {
         int i = this.constraints.size();
         while (0 != i--) {
-            this.constraints.get(i).resolve();
+            con.accept(this.constraints.get(i));
         }
-
-        this.pos.keep_inside(rendererPage.bounds);
-
     }
 
     /**
@@ -110,7 +110,7 @@ public class Point {
      * @return the boolean
      */
     public boolean attach(Point point, float spring_constant) {
-        return this.constraints.add(new Constraint(this, point, rendererPage.spacing, spring_constant, rendererPage.tear_distance));
+        return point == null ? false : this.constraints.add(new Constraint(this, point, spring_constant, physics));
     }
 
     public void remove_constraint(Constraint constraint) {
@@ -122,7 +122,7 @@ public class Point {
     }
 
     public boolean pin(float pinx, float piny) {
-        this.pin = new Vec(pinx, piny, 0.0F);
+        this.pin = new Vec(pinx, piny, Main.Z_PLANE);
         return true;
     }
 
@@ -134,12 +134,9 @@ public class Point {
         this.constraints = constraints;
     }
 
-    public Mouse getMouse() {
-        return mouse;
-    }
-
-    public void setMouse(Mouse mouse) {
-        this.mouse = mouse;
+    @Override
+    public String toString() {
+        return "Point{" + "pos=" + pos + '}';
     }
 
 }

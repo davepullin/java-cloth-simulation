@@ -3,7 +3,7 @@ package org.pullin.cloth.simulation;
 /**
  *  * based on org.sarath.cloth.simulation
  *
- * @author root
+ * Copyright Dave Pullin. Licensed proprietary property. see http://davepullin.com/license
  */
 
 public class Mouse {
@@ -27,6 +27,9 @@ public class Mouse {
     }
 
     public void setButton(int button) {
+        if(this.button==button)
+            return;
+        System.out.println("Button: "+button);
         this.button = button;
     }
 

@@ -4,7 +4,7 @@ import java.awt.Component;
 
 /**
  *
- * @author root
+ * Copyright Dave Pullin. Licensed proprietary property. see http://davepullin.com/license
  */
 public class AsyncPainter extends Thread {
 
